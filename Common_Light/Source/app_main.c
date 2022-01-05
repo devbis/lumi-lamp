@@ -54,6 +54,7 @@
 #include "PDM.h"
 #include "app_zlo_light_node.h"
 #include "app_power_on_counter.h"
+#include "app_serial_commands.h"
 
 #ifdef Light_ColorLight
 #include "App_Light_ColorLight.h"
@@ -113,6 +114,9 @@
 #define APP_QUEUE_SIZE                  8
 #define MCPS_DCFM_QUEUE_SIZE 		5
 
+#define TX_QUEUE_SIZE        150
+#define RX_QUEUE_SIZE        150
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -130,6 +134,7 @@ PUBLIC uint8 u8TimerButtonScan;
 PUBLIC uint8 u8TimerRadioRecal;
 PUBLIC uint8 u8TimerTick;
 PUBLIC uint8 u8TimerPowerOn;
+PUBLIC uint8 u8TimerRestart;
 
 #define APP_NUM_STD_TMRS            4
 
@@ -173,6 +178,8 @@ PRIVATE MAC_tsMlmeVsDcfmInd asMacMlmeVsDcfmInd[MLME_QUEQUE_SIZE];
 PRIVATE BDB_tsZpsAfEvent asBdbEvent[BDB_QUEUE_SIZE];
 PRIVATE MAC_tsMcpsVsCfmData asMacMcpsDcfm[MCPS_DCFM_QUEUE_SIZE];
 
+PRIVATE uint8 au8TxBuffer[TX_QUEUE_SIZE];
+PRIVATE uint8 au8RxBuffer[RX_QUEUE_SIZE];
 
 PRIVATE APP_tsLightEvent asAppEvent[APP_QUEUE_SIZE];
 #ifdef CLD_GREENPOWER
@@ -210,7 +217,9 @@ PUBLIC void APP_vMainLoop(void)
         DBG_vPrintf(FALSE, "APP: Entering ZTIMER_vTask\n");
         ZTIMER_vTask();
 
-        DBG_vPrintf(FALSE, "APP: Entering APP_taskLight\n");
+		APP_taskAtSerial();
+
+		DBG_vPrintf(FALSE, "APP: Entering APP_taskLight\n");
         APP_taskLight();
 
         /* Re-load the watch-dog timer. Execution must return through the idle
@@ -285,6 +294,7 @@ PUBLIC void APP_vInitResources(void)
     ZTIMER_eOpen(&u8TimerRadioRecal,    APP_cbTimerRadioRecal,      NULL, ZTIMER_FLAG_PREVENT_SLEEP);
     ZTIMER_eOpen(&u8TimerTick,          APP_cbTimerZclTick,         NULL, ZTIMER_FLAG_PREVENT_SLEEP);
     ZTIMER_eOpen(&u8TimerPowerOn,       APP_cbTimerPowerCount,      NULL, ZTIMER_FLAG_PREVENT_SLEEP);
+	ZTIMER_eOpen(&u8TimerRestart,       APP_cbTimerRestart,         NULL, ZTIMER_FLAG_PREVENT_SLEEP);
     #ifdef CLD_GREENPOWER
         ZTIMER_eOpen(&u8GPTimerTick,    APP_cbTimerGPZclTick,       NULL, ZTIMER_FLAG_PREVENT_SLEEP);
     #endif
@@ -303,7 +313,11 @@ PUBLIC void APP_vInitResources(void)
     ZQ_vQueueCreate(&zps_msgMcpsDcfmInd,         MCPS_QUEUE_SIZE,        sizeof(MAC_tsMcpsVsDcfmInd),(uint8*)asMacMcpsDcfmInd);
     ZQ_vQueueCreate(&zps_TimeEvents,            TIMER_QUEUE_SIZE,        sizeof(zps_tsTimeEvent),    (uint8*)asTimeEvent);
     ZQ_vQueueCreate(&zps_msgMcpsDcfm, MCPS_DCFM_QUEUE_SIZE,				sizeof(MAC_tsMcpsVsCfmData),(uint8*)asMacMcpsDcfm);
-#ifdef CLD_GREENPOWER
+
+	ZQ_vQueueCreate(&APP_msgSerialTx, TX_QUEUE_SIZE, sizeof(uint8), (uint8 *)au8TxBuffer);
+	ZQ_vQueueCreate(&APP_msgSerialRx, RX_QUEUE_SIZE, sizeof(uint8), (uint8 *)au8RxBuffer);
+
+	#ifdef CLD_GREENPOWER
     ZQ_vQueueCreate(&APP_msgGPZCLTimerEvents,        GP_TIMER_QUEUE_SIZE,         sizeof(uint8),   (uint8*)au8GPZCLEvent);
 #endif
 }

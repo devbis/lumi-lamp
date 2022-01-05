@@ -1,10 +1,10 @@
-/*****************************************************************************
+/****************************************************************************
  *
- * MODULE:             JN-AN-1218
+ * MODULE:              Lumi Router
  *
- * COMPONENT:          app_main.h
+ * COMPONENT:           app_serial_commands.h
  *
- * DESCRIPTION:        Light bulb application main file
+ * DESCRIPTION:         Serial Commands
  *
  ****************************************************************************
  *
@@ -28,16 +28,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright NXP B.V. 2017. All rights reserved
+ * Copyright NXP B.V. 2016. All rights reserved
  *
- ***************************************************************************/
+ ****************************************************************************/
 
-#ifndef APP_MAIN_H
-#define APP_MAIN_H
+#ifndef APP_SERIAL_COMMANDS_H
+#define APP_SERIAL_COMMANDS_H
 
-#include "ZQueue.h"
-#include "tsv_pub.h"
-#include "bdb_api.h"
+/****************************************************************************/
+/***        Include Files                                                 ***/
+/****************************************************************************/
+
+#include <jendefs.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -48,59 +50,18 @@
 /****************************************************************************/
 
 /****************************************************************************/
+/***        Exported Variables                                            ***/
+/****************************************************************************/
+
+/****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
 
-PUBLIC void APP_vInitResources(void);
-PUBLIC void APP_vSetUpHardware(void);
-PUBLIC void APP_vMainLoop(void);
+PUBLIC void APP_taskAtSerial(void);
+PUBLIC void APP_WriteMessageToSerial(const char *message);
 
 /****************************************************************************/
-/***        External Variables                                            ***/
+/***        END OF FILE                                                   ***/
 /****************************************************************************/
 
-extern PUBLIC uint8 u8TimerButtonScan;
-extern PUBLIC uint8 u8TimerRadioRecal;
-extern PUBLIC uint8 u8TimerTick;
-extern PUBLIC uint8 u8TimerPowerOn;
-extern PUBLIC uint8 u8TimerRestart;
-extern PUBLIC tszQueue zps_msgMcpsDcfm;
-
-extern PUBLIC tszQueue APP_msgSerialTx;
-extern PUBLIC tszQueue APP_msgSerialRx;
-
-#ifdef CLD_GREENPOWER
-extern PUBLIC uint8 u8GPTimerTick;
-#endif
-#if (defined APP_NTAG_ICODE) || (defined APP_NTAG_AES)
-extern PUBLIC uint8 u8TimerNtag;
-#endif
-
-
-extern PUBLIC tszQueue zps_msgMlmeDcfmInd;
-extern PUBLIC tszQueue zps_msgMcpsDcfmInd;
-extern PUBLIC tszQueue zps_TimeEvents;
-
-extern PUBLIC tszQueue APP_msgBdbEvents;
-extern PUBLIC tszQueue APP_msgAppEvents;
-#ifdef CLD_GREENPOWER
-extern PUBLIC tszQueue APP_msgGPZCLTimerEvents;
-extern uint8 au8GPZCLEvent[];
-extern uint8 u8GPZCLTimerEvent;
-#endif
-
-#ifdef OTA_CLD_ATTR_REQUEST_DELAY
-    extern PUBLIC uint8 u8TimerZclMsTick;
-#endif
-
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-
-#endif /* APP_MAIN_H */
-
-
-
-
-
-
+#endif /* APP_SERIAL_COMMANDS_H */

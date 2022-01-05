@@ -113,6 +113,7 @@ PUBLIC void APP_vInitialiseNode(void);
 PUBLIC void APP_vFactoryResetRecords(void);
 PUBLIC void APP_taskLight(void);
 PUBLIC void APP_vOobcSetRunning(void);
+PUBLIC void APP_cbTimerRestart(void *pvParam);
 
 #ifdef CLD_OTA
 PUBLIC teNODE_STATES eGetNodeState(void);

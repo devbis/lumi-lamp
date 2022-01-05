@@ -351,6 +351,19 @@ PUBLIC void APP_vInitialiseNode(void)
 
 /****************************************************************************
  *
+ * NAME: APP_cbTimerRestart
+ *
+ * DESCRIPTION:
+ * CallBack For Restart
+ *
+ ****************************************************************************/
+PUBLIC void APP_cbTimerRestart(void *pvParam)
+{
+	vAHI_SwReset();
+}
+
+/****************************************************************************
+ *
  * NAME: APP_vBdbCallback
  *
  * DESCRIPTION:

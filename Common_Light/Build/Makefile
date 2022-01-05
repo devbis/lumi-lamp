@@ -379,6 +379,8 @@ APPSRC += zps_gen.c
 APPSRC += app_start_light.c
 APPSRC += app_scenes.c
 APPSRC += app_pdm_convert.c
+APPSRC += app_serial_commands.c
+APPSRC += uart.c
 
 ifeq ($(JENNIC_CHIP_FAMILY), JN517x)
 APPSRC += AHI_ModuleConfiguration.c 

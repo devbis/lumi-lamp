@@ -62,6 +62,8 @@
 #include "app_light_interpolation.h"
 #include "DriverBulb_Shim.h"
 
+#include "uart.h"
+
 #ifdef APP_NTAG_ICODE
 #include "ntag_nwk.h"
 #include "app_ntag_icode.h"
@@ -116,6 +118,8 @@ extern void *_stack_low_water_mark;
 /***        Local Variables                                               ***/
 /****************************************************************************/
 
+PUBLIC tszQueue APP_msgSerialTx;
+PUBLIC tszQueue APP_msgSerialRx;
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
@@ -289,11 +293,16 @@ PRIVATE void APP_vInitialise(void)
     /* Initialise the debug diagnostics module to use UART0 at 115K Baud;
      * Do not use UART 1 if LEDs are used, as it shares DIO with the LEDS
      */
-    DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+#ifdef UART_DEBUGGING
+	DBG_vUartInit(DBG_E_UART_0, DBG_E_UART_BAUD_RATE_115200);
+#endif
 
-    /* Initialise JenOS modules. Initialise Power Manager even on non-sleeping nodes
-     * as it allows the device to doze when in the idle task
-     */
+	UART_vInit();
+	UART_vRtsStartFlow();
+
+	/* Initialise JenOS modules. Initialise Power Manager even on non-sleeping nodes
+	 * as it allows the device to doze when in the idle task
+	 */
     PWRM_vInit(E_AHI_SLEEP_OSCON_RAMON);
 
     /* Initialise the Persistent Data Manager */
