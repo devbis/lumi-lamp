@@ -176,7 +176,7 @@ endif
 ###############################################################################
 # Default DK4 development kit target hardware
 
-DR ?= DR1175
+DR ?= Stub
 ifeq ($(DR), DR1175)
 CFLAGS  += -DBUTTON_MAP_DR1175
 endif
@@ -403,6 +403,11 @@ endif
 APPSRC += App_$(TARGET).c
 APPSRC += DriverBulb_$(DR).c
 APPSRC += DriverBulb_Shim.c
+
+
+ifeq ($(DR), Stub)
+APPSRC += app_buttons.c
+endif
 
 ifeq ($(DR), OM15045)
 CFLAGS  += -DBUTTON_MAP_OM15045
