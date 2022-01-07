@@ -152,8 +152,9 @@ enum
 #define CLD_BAS_ATTR_PRODUCT_CODE
 #define CLD_BAS_ATTR_PRODUCT_URL
 
-#define BAS_MODEL_ID_STRING		"ZLO-ExtendedColor"
-#define BAS_MANUF_NAME_STRING   "NXP"
+//#define BAS_MODEL_ID_STRING		"ZLO-ExtendedColor"
+#define BAS_MODEL_ID_STRING		"lumi.light.rgbac1"
+#define BAS_MANUF_NAME_STRING   "Xiaomi"
 #define BAS_DATE_STRING         "20161101"
 #define BAS_SW_BUILD_STRING     "1000-0001"
 #define BAS_URL_STRING          "www.nxp.com"
