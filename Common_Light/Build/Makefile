@@ -176,7 +176,7 @@ endif
 ###############################################################################
 # Default DK4 development kit target hardware
 
-DR ?= Stub
+DR ?= DR1175
 ifeq ($(DR), DR1175)
 CFLAGS  += -DBUTTON_MAP_DR1175
 endif

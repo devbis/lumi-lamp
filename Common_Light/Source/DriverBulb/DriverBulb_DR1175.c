@@ -135,8 +135,8 @@ PUBLIC void DriverBulb_vSetOnOff(bool_t bOn)
 #else
 	(bOn) ? bWhite_LED_On() : bWhite_LED_Off();
 #endif
-     bBulbOn =  bOn;
-     DBG_vPrintf(TRUE, "\nS:%s",(bOn ? "ON" : "OFF"));
+    bBulbOn =  bOn;
+    DBG_vPrintf(TRUE, "\n$S:%d\n",(bOn ? 1 : 0));
 }
 
 PUBLIC void DriverBulb_vSetLevel(uint32 u32Level)
@@ -150,12 +150,14 @@ PUBLIC void DriverBulb_vSetLevel(uint32 u32Level)
 		bWhite_LED_SetLevel(MAX(1,u32Level));
 	}
 #endif
-	DBG_vPrintf(TRUE, "\nL%d",u32Level);
+//	DBG_vPrintf(TRUE, "\nL%d",u32Level);
+	DBG_vPrintf(TRUE, "\n$L:%d\n",u32Level);
 }
 
 PUBLIC void DriverBulb_vSetColour(uint32 u32Red, uint32 u32Green, uint32 u32Blue)
 {
-	DBG_vPrintf(TRUE, "\nColor: (%d, %d, %d)",u32Red, u32Green, u32Blue);
+//	DBG_vPrintf(TRUE, "\nColor: (%d, %d, %d)",u32Red, u32Green, u32Blue);
+	DBG_vPrintf(TRUE, "\n$C:%d,%d,%d\n",u32Red, u32Green, u32Blue);
 #ifdef RGB
 	bRGB_LED_SetLevel(u32Red,u32Green,u32Blue);
 #endif
