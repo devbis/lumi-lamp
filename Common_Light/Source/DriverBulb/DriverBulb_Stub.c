@@ -74,7 +74,23 @@ PRIVATE	uint32 au32Mireds2RGB[17][4] =
 
 PUBLIC void DriverBulb_vInit(void)
 {
+	static bool_t bFirstCalled = TRUE;
 
+	if (bFirstCalled)
+	{
+		bRGB_LED_Enable();
+		bRGB_LED_Off();
+		bWhite_LED_Enable();
+		bWhite_LED_Off();
+
+#if defined RGB || defined CCT
+		bRGB_LED_SetLevel(255,255,255);
+		bRGB_LED_SetGroupLevel( 255);
+#else
+		bWhite_LED_SetLevel(255);
+#endif
+		bFirstCalled = FALSE;
+	}
 }
 
 PUBLIC void DriverBulb_vOn(void)
@@ -89,12 +105,25 @@ PUBLIC void DriverBulb_vOff(void)
 
 PUBLIC void DriverBulb_vSetOnOff(bool_t bOn)
 {
-     bBulbOn =  bOn;
-     DBG_vPrintf(TRUE, "\n$S:%d\n",(bOn ? 1 : 0));
+#if defined RGB || defined CCT
+	(bOn) ? bRGB_LED_On(): bRGB_LED_Off();
+#else
+	(bOn) ? bWhite_LED_On() : bWhite_LED_Off();
+#endif
+    bBulbOn =  bOn;
+	DBG_vPrintf(TRUE, "\n$S:%d\n",(bOn ? 1 : 0));
 }
 
 PUBLIC void DriverBulb_vSetLevel(uint32 u32Level)
 {
+#if defined RGB || defined CCT
+	bRGB_LED_SetGroupLevel(MAX(1,u32Level));
+#else
+	if (bBulbOn)
+	{
+		bWhite_LED_SetLevel(MAX(1,u32Level));
+	}
+#endif
 	DBG_vPrintf(TRUE, "\n$L:%d\n",u32Level);
 }
 
@@ -142,53 +171,53 @@ PUBLIC int16 DriverBulb_i16Analogue(uint8 u8Adc, uint16 u16AdcRead)
 /* on DR1221 drivers and allows the DR1175 to look like a CCT=TW bulb */
 PUBLIC void DriverBulb_vSetTunableWhiteColourTemperature(int32 i32ColourTemperature)
 {
-//#ifdef CCT
-//	uint16 u16Mireds;
-//
-//	/* Convert passed in temperature to mireds (passed in as kelvins) */
-//	u16Mireds = (uint16) (1000000/i32ColourTemperature);
-//
-//	/* Value in range ? */
-//	if (u16Mireds <= 1023)
-//	{
-//		uint8   u8Loop;
-//		uint32 u32RangeM = 0;
-//		uint32 u32DiffM;
-//		uint32 u32RangeRGB;
-//		uint32 u32DiffRGB;
-//
-//		/* Start with all values set to full */
-//		uint8 u8Red   = 255;
-//		uint8 u8Green = 255;
-//		uint8 u8Blue  = 255;
-//
-//		/* Loop through table until we find entry above current temperature */
-//		for (u8Loop = 1; u8Loop < 17 && u32RangeM == 0; u8Loop++)
-//		{
-//			/* Is this the value above the one we are looking for ? */
-//			if (au32Mireds2RGB[u8Loop][0] > u16Mireds)
-//			{
-//				/* Calculate range and difference in mireds */
-//				u32RangeM = au32Mireds2RGB[u8Loop][0] - au32Mireds2RGB[u8Loop-1][0];
-//				u32DiffM  = u16Mireds                 - au32Mireds2RGB[u8Loop-1][0];
-//				/* Calculate red */
-//				u32RangeRGB = au32Mireds2RGB[u8Loop][1] - au32Mireds2RGB[u8Loop-1][1];
-//				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
-//				u8Red   = au32Mireds2RGB[u8Loop-1][1] + u32DiffRGB;
-//				/* Calculate green */
-//				u32RangeRGB = au32Mireds2RGB[u8Loop][2] - au32Mireds2RGB[u8Loop-1][2];
-//				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
-//				u8Green = au32Mireds2RGB[u8Loop-1][2] + u32DiffRGB;
-//				/* Calculate blue */
-//				u32RangeRGB = au32Mireds2RGB[u8Loop][3] - au32Mireds2RGB[u8Loop-1][3];
-//				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
-//				u8Blue = au32Mireds2RGB[u8Loop-1][3] + u32DiffRGB;
-//			}
-//		}
-//
-//		bRGB_LED_SetLevel(u8Red, u8Green, u8Blue);
-//	}
-//#endif
+#ifdef CCT
+	uint16 u16Mireds;
+
+	/* Convert passed in temperature to mireds (passed in as kelvins) */
+	u16Mireds = (uint16) (1000000/i32ColourTemperature);
+
+	/* Value in range ? */
+	if (u16Mireds <= 1023)
+	{
+		uint8   u8Loop;
+		uint32 u32RangeM = 0;
+		uint32 u32DiffM;
+		uint32 u32RangeRGB;
+		uint32 u32DiffRGB;
+
+		/* Start with all values set to full */
+		uint8 u8Red   = 255;
+		uint8 u8Green = 255;
+		uint8 u8Blue  = 255;
+
+		/* Loop through table until we find entry above current temperature */
+		for (u8Loop = 1; u8Loop < 17 && u32RangeM == 0; u8Loop++)
+		{
+			/* Is this the value above the one we are looking for ? */
+			if (au32Mireds2RGB[u8Loop][0] > u16Mireds)
+			{
+				/* Calculate range and difference in mireds */
+				u32RangeM = au32Mireds2RGB[u8Loop][0] - au32Mireds2RGB[u8Loop-1][0];
+				u32DiffM  = u16Mireds                 - au32Mireds2RGB[u8Loop-1][0];
+				/* Calculate red */
+				u32RangeRGB = au32Mireds2RGB[u8Loop][1] - au32Mireds2RGB[u8Loop-1][1];
+				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
+				u8Red   = au32Mireds2RGB[u8Loop-1][1] + u32DiffRGB;
+				/* Calculate green */
+				u32RangeRGB = au32Mireds2RGB[u8Loop][2] - au32Mireds2RGB[u8Loop-1][2];
+				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
+				u8Green = au32Mireds2RGB[u8Loop-1][2] + u32DiffRGB;
+				/* Calculate blue */
+				u32RangeRGB = au32Mireds2RGB[u8Loop][3] - au32Mireds2RGB[u8Loop-1][3];
+				u32DiffRGB  = (u32DiffM * u32RangeRGB) / u32RangeM;
+				u8Blue = au32Mireds2RGB[u8Loop-1][3] + u32DiffRGB;
+			}
+		}
+
+		bRGB_LED_SetLevel(u8Red, u8Green, u8Blue);
+	}
+#endif
 }
 
 /****************************************************************************/
