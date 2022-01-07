@@ -186,7 +186,7 @@ PUBLIC teNODE_STATES eGetNodeState(void)
  ****************************************************************************/
 PUBLIC void APP_vInitialiseNode(void)
 {
-#if (defined DR1173) || (defined DR1175) || (defined OM15045) || (defined OM15053)
+#if (defined Stub) || (defined DR1173) || (defined DR1175) || (defined OM15045) || (defined OM15053)
     bool_t bDeleteRecords = FALSE;
 #endif
 
@@ -205,7 +205,7 @@ PUBLIC void APP_vInitialiseNode(void)
 
 
 
-    #if (defined DR1173) || (defined DR1175) || (defined OM15045) || (defined OM15053)
+    #if (defined Stub) || (defined DR1173) || (defined DR1175) || (defined OM15045) || (defined OM15053)
         bDeleteRecords = APP_bButtonInitialise();
     #endif
 
@@ -251,7 +251,7 @@ PUBLIC void APP_vInitialiseNode(void)
     /* Initialise ZBPro stack */
     ZPS_eAplAfInit();
 
-#if (defined DR1175) || (defined DR1173) || (defined OM15045) || (defined OM15053)
+#if (defined Stub) || (defined DR1175) || (defined DR1173) || (defined OM15045) || (defined OM15053)
     if (bDeleteRecords) {
         PDM_vDeleteDataRecord(PDM_ID_APP_SCENES_DATA);
         while (APP_bButtonInitialise());
@@ -262,7 +262,7 @@ PUBLIC void APP_vInitialiseNode(void)
 
     APP_ZCL_vInitialise();
 
-#if (defined DR1175) || (defined DR1173) || (defined OM15045) || (defined OM15053)
+#if (defined Stub) || (defined DR1175) || (defined DR1173) || (defined OM15045) || (defined OM15053)
     /* If required, at this point delete the network context from flash, perhaps upon some condition
      * For example, check if a button is being held down at reset, and if so request the Persistent
      * Data Manager to delete all its records:

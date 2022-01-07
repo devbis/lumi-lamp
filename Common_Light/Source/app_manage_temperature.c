@@ -97,7 +97,7 @@ PRIVATE int16 i16GetChipTemp(uint16 u16AdcValue);
 PUBLIC void APP_vManageTemperatureInit(void)
 {
     /* set up the ADCS on platforms that dont already use them */
-#if (defined DR1175) || (defined DR1173) || (defined DR1190)
+#if (defined Stub) || (defined DR1175) || (defined DR1173) || (defined DR1190)
     /* Set up the analogue peripherals ready to handle the conversions */
     vAHI_ApConfigure(E_AHI_AP_REGULATOR_ENABLE,
     E_AHI_AP_INT_DISABLE,
