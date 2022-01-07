@@ -155,10 +155,10 @@ enum
 //#define BAS_MODEL_ID_STRING		"ZLO-ExtendedColor"
 //#define BAS_MODEL_ID_STRING		"lumi.light.rgbac1"
 #define BAS_MODEL_ID_STRING		"HML004"
-#define BAS_MANUF_NAME_STRING   "Lumi"
-#define BAS_DATE_STRING         "20161101"
+#define BAS_MANUF_NAME_STRING   "Openlumi"
+#define BAS_DATE_STRING         "20220107"
 #define BAS_SW_BUILD_STRING     "1000-0001"
-#define BAS_URL_STRING          "www.nxp.com"
+#define BAS_URL_STRING          "openlumi.github.io"
 #define BAS_PCODE_STRING		{1,2,3,4}
 
 #define CLD_BAS_APP_VERSION         (1)
